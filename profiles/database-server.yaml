@@ -1,0 +1,39 @@
+# BIOS profile: Database Server (PostgreSQL, MySQL, Oracle, SQL Server)
+# Apply via: racadm set -t xml -f database-server.xml -c BIOS
+
+description: >
+  Optimized for database workloads. Prioritizes memory bandwidth,
+  low-latency I/O, and consistent performance over power savings.
+
+bios_settings:
+  # Processor
+  LogicalProc: Disabled             # Disable HT — databases prefer real cores
+  VirtualizationTechnology: Disabled
+  ProcTurboMode: Enabled
+  ProcCStates: Disabled
+  SubNumaCluster: Disabled
+
+  # System Profile
+  SysProfile: PerfOptimized
+  EnergyPerformanceBias: MaxPower
+
+  # Memory
+  MemOpMode: OptimizerMode
+  NodeInterleave: Disabled          # NUMA-aware databases benefit from topology
+  MemPatrolScrub: Standard
+  MemRefreshRate: 1x                # Standard refresh — use 2x only if errors
+
+  # Boot
+  BootMode: Uefi
+  SecureBoot: Enabled
+
+  # Integrated Devices
+  EmbSata: AhciMode
+  OsWatchdogTimer: Enabled
+
+notes: |
+  - Hyper-Threading often hurts database performance due to contention.
+  - NUMA awareness: Pin database processes to NUMA nodes for best performance.
+  - Disable C-states for consistent query latency.
+  - For NVMe-based storage, ensure PCIe slots match CPU affinity.
+  - Monitor memory ECC errors closely — database corruption from bit flips is catastrophic.

@@ -1,0 +1,47 @@
+# BIOS profile: Virtualization Host (ESXi, Proxmox, KVM)
+# Apply via: racadm set -t xml -f virtualization-host.xml -c BIOS
+#
+# This profile documents the recommended BIOS settings for a PowerEdge
+# server running as a virtualization hypervisor host.
+
+description: >
+  Optimized for virtualization workloads. Enables hardware-assisted
+  virtualization, SR-IOV, and performance-oriented power settings.
+
+bios_settings:
+  # Processor
+  LogicalProc: Enabled              # Hyper-Threading
+  VirtualizationTechnology: Enabled # Intel VT-x / AMD-V
+  VtForDirectIo: Enabled            # Intel VT-d / AMD-Vi (IOMMU)
+  SubNumaCluster: Disabled          # SNC — disable for general virt
+  ProcX2Apic: Enabled               # x2APIC for >255 logical CPUs
+
+  # System Profile
+  SysProfile: PerfOptimized         # Max performance
+  ProcTurboMode: Enabled
+  ProcCStates: Disabled             # Disable C-states for consistent latency
+  EnergyPerformanceBias: MaxPower
+
+  # Memory
+  MemOpMode: OptimizerMode          # Optimizer for max bandwidth
+  NodeInterleave: Disabled          # Preserve NUMA topology
+  MemPatrolScrub: Standard
+
+  # Boot
+  BootMode: Uefi
+  SecureBoot: Enabled
+  UefiBootSeq: depends_on_deployment
+
+  # Network
+  SriovGlobalEnable: Enabled        # SR-IOV for NIC passthrough
+
+  # Integrated Devices
+  OsWatchdogTimer: Disabled         # Hypervisor manages its own watchdog
+  EmbSata: AhciMode
+
+notes: |
+  - Disable C-states to avoid latency spikes in VM scheduling.
+  - SR-IOV is critical for NIC passthrough to VMs.
+  - VT-d/AMD-Vi required for PCIe passthrough and IOMMU groups.
+  - NUMA-aware: keep NodeInterleave disabled so hypervisor sees real topology.
+  - SecureBoot may need to be disabled for unsigned hypervisor kernels.

@@ -1,0 +1,39 @@
+# BIOS profile: Storage Server (Ceph, MinIO, ZFS, NFS)
+# Apply via: racadm set -t xml -f storage-server.xml -c BIOS
+
+description: >
+  Optimized for storage-heavy workloads. Prioritizes I/O throughput,
+  PCIe bandwidth for NVMe/HBAs, and memory for caching.
+
+bios_settings:
+  # Processor
+  LogicalProc: Enabled
+  VirtualizationTechnology: Disabled
+  ProcTurboMode: Enabled
+  ProcCStates: Disabled
+  SubNumaCluster: Disabled
+
+  # System Profile
+  SysProfile: PerfOptimized
+  EnergyPerformanceBias: MaxPower
+
+  # Memory
+  MemOpMode: OptimizerMode
+  NodeInterleave: Disabled
+  MemPatrolScrub: Standard
+
+  # Boot
+  BootMode: Uefi
+  SecureBoot: Enabled
+
+  # Integrated Devices
+  EmbSata: AhciMode
+  OsWatchdogTimer: Enabled
+  SriovGlobalEnable: Disabled
+
+notes: |
+  - For Ceph OSD nodes, ensure NVMe drives are on PCIe lanes closest to the CPU handling I/O.
+  - Use HT — storage daemons benefit from extra threads for I/O handling.
+  - RAID controller: consider IT mode / HBA passthrough for software-defined storage (Ceph, ZFS).
+  - For JBOD configurations, flash PERC to HBA mode or use an HBA card.
+  - Monitor drive health aggressively — storage servers have many drives and failures are common.

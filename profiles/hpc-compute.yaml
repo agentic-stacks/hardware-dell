@@ -1,0 +1,44 @@
+# BIOS profile: HPC / Compute Node
+# Apply via: racadm set -t xml -f hpc-compute.xml -c BIOS
+
+description: >
+  Optimized for HPC, scientific computing, and AI/ML training workloads.
+  Maximum CPU throughput, memory bandwidth, and GPU support.
+
+bios_settings:
+  # Processor
+  LogicalProc: Enabled              # HT benefits parallel workloads
+  VirtualizationTechnology: Disabled # No VMs — bare metal compute
+  ProcTurboMode: Enabled
+  ProcCStates: Disabled
+  SubNumaCluster: Enabled           # SNC can help memory-bound HPC codes
+  ProcX2Apic: Enabled
+  UpiPrefetch: Enabled
+
+  # System Profile
+  SysProfile: PerfOptimized
+  EnergyPerformanceBias: MaxPower
+
+  # Memory
+  MemOpMode: OptimizerMode
+  NodeInterleave: Disabled          # NUMA-aware MPI benefits
+  MemPatrolScrub: Standard
+
+  # Boot
+  BootMode: Uefi
+  SecureBoot: Disabled              # Many HPC kernels are unsigned
+
+  # PCIe / GPU
+  SriovGlobalEnable: Disabled
+  MmioAbove4Gb: Enabled             # Required for large GPU BAR memory
+  MmioHighBase: 56T                 # For systems with many GPUs
+
+  # Integrated Devices
+  OsWatchdogTimer: Disabled
+
+notes: |
+  - SubNumaCluster improves memory-bandwidth-bound codes by reducing NUMA hops.
+  - MmioAbove4Gb must be enabled for multi-GPU systems (A100, H100, etc.).
+  - Disable power saving features for deterministic runtimes.
+  - For GPU clusters, verify PCIe topology with lspci -tv.
+  - InfiniBand/RoCE NICs: ensure SR-IOV is disabled unless using GPU-Direct RDMA with VMs.
