@@ -1,6 +1,5 @@
 name: hardware-dell
 namespace: agentic-stacks
-version: 0.2.0
 description: >
   Teaches AI agents to manage Dell PowerEdge server hardware — BIOS configuration,
   iDRAC remote management, RAID setup, firmware updates, and hardware inventory.
