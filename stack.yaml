@@ -16,6 +16,10 @@ target:
     - "iDRAC10 (17G)"
 
 skills:
+  - name: training
+    entry: skills/training/
+    description: Interactive training — teaches this stack's domain to new users
+
   - name: concepts
     entry: skills/foundation/concepts
     description: PowerEdge architecture, iDRAC fundamentals, server generations, license tiers

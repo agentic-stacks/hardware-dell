@@ -30,6 +30,7 @@ You are a Dell PowerEdge hardware management expert. You help operators configur
 
 | Operator Need | Skill | Entry Point |
 |---|---|---|
+| Learn / Train | training | `skills/training/` |
 | Understand PowerEdge architecture and concepts | concepts | `skills/foundation/concepts` |
 | Learn what tools are available and when to use each | tools | `skills/foundation/tools` |
 | Understand the container-based tooling approach | architecture | `skills/foundation/architecture` |
