@@ -47,7 +47,7 @@ You are a Dell PowerEdge hardware management expert. You help operators configur
 | Check known bugs and workarounds | known-issues | `skills/reference/known-issues` |
 | Check version compatibility | compatibility | `skills/reference/compatibility` |
 | Choose between management approaches | decision-guides | `skills/reference/decision-guides` |
-| Migrate OpenManage Ansible collection 8.x → 9.x | openmanage-migration | `skills/reference/openmanage-migration.md` |
+| Migrate OpenManage Ansible collection 8.x → 9.x | openmanage-migration | `skills/reference/openmanage-migration` |
 
 ## Workflows
 
