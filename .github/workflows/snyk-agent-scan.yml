@@ -17,15 +17,46 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v4
 
-      - name: Set up Claude Code skill config for discovery
+      - name: Build skills directory for agent-scan discovery
         run: |
-          mkdir -p ~/.claude/skills
-          for skill in $(find skills -name "README.md" -not -path "skills/README.md"); do
-            dir=$(dirname "$skill")
-            name=$(basename "$dir")
-            ln -s "$PWD/$skill" ~/.claude/skills/"$name".md
-          done
-          ls -la ~/.claude/skills/
+          pip install pyyaml
+          python3 -c "
+          import yaml, os, shutil
+
+          with open('stack.yaml') as f:
+              stack = yaml.safe_load(f)
+
+          skills_dir = os.path.expanduser('~/.claude/skills')
+          os.makedirs(skills_dir, exist_ok=True)
+
+          for skill in stack.get('skills', []):
+              name = skill['name']
+              entry = skill['entry']
+              desc = skill['description']
+              readme = os.path.join(entry, 'README.md')
+              if not os.path.isfile(readme):
+                  print(f'WARN: {readme} not found, skipping {name}')
+                  continue
+
+              with open(readme) as f:
+                  content = f.read()
+
+              target_dir = os.path.join(skills_dir, name)
+              os.makedirs(target_dir, exist_ok=True)
+
+              skill_md = f'---\nname: {name}\ndescription: {desc}\n---\n\n{content}'
+              with open(os.path.join(target_dir, 'SKILL.md'), 'w') as f:
+                  f.write(skill_md)
+
+              # Copy any other .md files from the skill directory
+              for fname in os.listdir(entry):
+                  if fname.lower() != 'readme.md' and fname.endswith('.md'):
+                      shutil.copy2(os.path.join(entry, fname), target_dir)
+
+              print(f'OK: {name} -> {target_dir}')
+
+          print(f'\nTotal: {len(os.listdir(skills_dir))} skills prepared')
+          "
 
       - name: Run Snyk Agent Scan
         env:
