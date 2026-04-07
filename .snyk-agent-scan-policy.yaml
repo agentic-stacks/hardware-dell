@@ -1,0 +1,23 @@
+# Snyk Agent Scan CI Policy
+#
+# snyk-agent-scan has no built-in code filtering, so this file defines
+# which finding codes are accepted for this stack and why.
+#
+# Any code NOT listed here will fail CI.
+
+allowed:
+  W007:
+    reason: >
+      racadm requires credentials via -p flag on the command line.
+      Skills teach env vars and Ansible vault as alternatives, but
+      command examples necessarily show the CLI form.
+
+  W012:
+    reason: >
+      External URLs (dl.dell.com, firmware repos) are Dell's official
+      download servers or example internal hostnames used in documentation.
+
+  W013:
+    reason: >
+      This is a hardware management stack. Privileged system modification
+      (BIOS, RAID, firmware, power control) is the entire purpose.
