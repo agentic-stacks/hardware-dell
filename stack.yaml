@@ -85,7 +85,7 @@ skills:
     description: Decision aids — local vs remote, racadm vs Ansible, RAID levels, firmware strategy
 
   - name: openmanage-migration
-    entry: skills/reference
+    entry: skills/reference/openmanage-migration
     description: Migration guide for Ansible dellemc.openmanage collection 8.x to 9.x
 
 project:
