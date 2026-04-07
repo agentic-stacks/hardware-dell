@@ -17,10 +17,20 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v4
 
+      - name: Set up Claude Code skill config for discovery
+        run: |
+          mkdir -p ~/.claude/skills
+          for skill in $(find skills -name "README.md" -not -path "skills/README.md"); do
+            dir=$(dirname "$skill")
+            name=$(basename "$dir")
+            ln -s "$PWD/$skill" ~/.claude/skills/"$name".md
+          done
+          ls -la ~/.claude/skills/
+
       - name: Run Snyk Agent Scan
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        run: uvx snyk-agent-scan@latest --skills skills/ --json > scan-results.json
+        run: uvx snyk-agent-scan@latest --skills --ci --json > scan-results.json
 
       - name: Display results
         if: always()
