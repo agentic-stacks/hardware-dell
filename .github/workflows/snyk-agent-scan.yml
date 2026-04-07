@@ -71,28 +71,34 @@ jobs:
         if: always()
         run: |
           python3 -c "
-          import json, yaml, sys
+          import json, sys
 
-          with open('.snyk-agent-scan-policy.yaml') as f:
-              policy = yaml.safe_load(f)
-          allowed_codes = set(policy.get('allowed', {}).keys())
+          # Codes expected for hardware management stacks - don't fail on these
+          ALLOWED_CODES = {
+              'W007',  # Credential handling - racadm requires -p flag
+              'W012',  # External URLs - Dell download servers
+              'W013',  # System modification - the whole point of the stack
+          }
 
           with open('scan-results.json') as f:
               data = json.load(f)
 
           blocking = []
-          for client_data in data.values():
+          for client_key, client_data in data.items():
               for issue in client_data.get('issues', []):
-                  if issue.get('code', '') not in allowed_codes:
+                  code = issue.get('code', '')
+                  if code not in ALLOWED_CODES:
                       blocking.append(issue)
 
-          total = sum(len(c.get('issues', [])) for c in data.values())
           if blocking:
               print(f'::error::Found {len(blocking)} blocking issue(s):')
               for issue in blocking:
                   print(f'  [{issue[\"code\"]}] {issue[\"message\"][:120]}')
               sys.exit(1)
-          print(f'No blocking issues. {total} accepted finding(s) in allowed categories.')
+          else:
+              total = sum(len(c.get('issues', [])) for c in data.values())
+              allowed = total - len(blocking)
+              print(f'No blocking issues. {allowed} accepted finding(s) in allowed categories.')
           "
 
       - name: Upload scan results
