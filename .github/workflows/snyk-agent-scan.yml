@@ -20,7 +20,7 @@ jobs:
       - name: Run Snyk Agent Scan
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        run: uvx snyk-agent-scan@latest --skills --json skills/ > scan-results.json
+        run: uvx snyk-agent-scan@latest --skills skills/ --json > scan-results.json
 
       - name: Display results
         if: always()
